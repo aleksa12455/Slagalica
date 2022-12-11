@@ -1,0 +1,54 @@
+{
+    "pitanja": [
+        {
+            "pitanje": "Glavnu ulogu u filmu Umri Muski glumi...",
+            "odgovori": ["Arnold Svarceneger", "Silvester Stalone", "Brus Vilis", "Klint Istvud"],
+            "tacanOdgovor": "Brus Vilis"
+        },
+        {
+            "pitanje": "Zabe spadaju u...",
+            "odgovori": ["Sisare", "Gmizavce", "Vodozemce", "Ribe"],
+            "tacanOdgovor": "Vodozemce"
+        },
+        {
+            "pitanje": "Koje godine je poceo Prvi Svetski rat?",
+            "odgovori": ["1912", "1914", "1916", "1918"],
+            "tacanOdgovor": "1914"
+        },
+        {
+            "pitanje": "Koliko NBA titula je osojio Majkl Dzordan u toku svoje karijere?.",
+            "odgovori": ["3", "4", "5", "6"],
+            "tacanOdgovor": "6"
+        },
+        {
+            "pitanje": "Koja je najveca Euro novcanica?",
+            "odgovori": ["500 eura", "1000 eura", "2000 eura", "5000 eura"],
+            "tacanOdgovor": "500 eura"
+        },
+        {
+            "pitanje": "U kojoj americkoj drzavi se nalazi grad Majami?",
+            "odgovori": ["Teksas", "Kalifornija", "Florida", "Nevada"],
+            "tacanOdgovor": "Florida"
+        },
+        {
+            "pitanje": "Ko je komponovao Na Lepom Plavom Dunavu?",
+            "odgovori": ["Mocart", "Betoven", "Bah", "Straus"],
+            "tacanOdgovor": "Straus"
+        },
+        {
+            "pitanje": "Koja je hemijska oznaka za olovo?",
+            "odgovori": ["Ld", "Ol", "Pb", "Bd"],
+            "tacanOdgovor": "Pb"
+        },
+        {
+            "pitanje": "Rec kopanje je...",
+            "odgovori": ["Imenica", "Glagol", "Zamenica", "Pridev"],
+            "tacanOdgovor": "Imenica"
+        },
+        {
+            "pitanje": "Pobednik pesme Evrovizije 2009 je",
+            "odgovori": ["Srbija", "Finska", "Norveska", "Rusija"],
+            "tacanOdgovor": "Norveska"
+        }
+    ]
+}

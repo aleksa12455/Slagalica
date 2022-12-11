@@ -1,0 +1,29 @@
+{
+    "asocijacije": [
+        {
+            "polja": {
+                "A1": "NOVAC",
+                "A2": "SRBIJA",
+                "A3": "ALZIR",
+                "A4": "KUVAJT",
+                "A": "DINAR",
+                "B1": "LJUBAVNI",
+                "B2": "RASKID",
+                "B3": "HAJDUCKI",
+                "B4": "OPROSTAJ",
+                "B": "RASTANAK",
+                "C1": "TIMOK",
+                "C2": "HADZI PRODAN",
+                "C3": "SELJAK",
+                "C4": "REKA",
+                "C": "BUNA",
+                "D1": "OMLADINA",
+                "D2": "SKUPSTINA",
+                "D3": "SINDIKAT",
+                "D4": "ZDRAVLJE",
+                "D": "DOM"
+            },
+            "resenje": "DJAK"
+        }
+    ]
+}
