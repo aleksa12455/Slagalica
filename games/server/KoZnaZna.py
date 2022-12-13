@@ -44,6 +44,7 @@ class KoZnaZna(ServerGame, ABC):
 
     def start(self, color):
         super().start(color)
+        if self.color is None: return
         self.startTime = self.getNow()
         for player in self.server.clients.values():
             player.turnedIn = None

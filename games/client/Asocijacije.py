@@ -29,13 +29,13 @@ class Asocijacije(Game, ABC):
         dX = 40
         fieldWidth = 15
         startX = 200
-        startY = 200
+        startY = 50
         endX = 800
-        endY = 800
+        endY = 700
 
         for i in range(5):
             if i == 4:
-                entry = Entry(self.sFrame, width=fieldWidth, font=('Calibri', 22), justify=CENTER)
+                entry = Entry(self.sFrame, state=DISABLED, width=fieldWidth, font=('Calibri', 22), justify=CENTER)
                 self.entries['A'] = entry
                 entry.place(x=startX + dX * i, y=startY + dY * i, anchor=CENTER)
                 continue
@@ -46,18 +46,18 @@ class Asocijacije(Game, ABC):
 
         for i in range(5):
             if i == 4:
-                entry = Entry(self.sFrame, width=fieldWidth, font=('Calibri', 22), justify=CENTER)
+                entry = Entry(self.sFrame, state=DISABLED, width=fieldWidth, font=('Calibri', 22), justify=CENTER)
                 self.entries['B'] = entry
                 entry.place(x=endX - dX * i, y=startY + dY * i, anchor=CENTER)
                 continue
             field = f'B{i+1}'
-            button = Button(self.sFrame, text=field, command=lambda f=field: self.onClick(f), width=fieldWidth, font=('Calibri', 22))
+            button = Button(self.sFrame, state=DISABLED, text=field, command=lambda f=field: self.onClick(f), width=fieldWidth, font=('Calibri', 22))
             self.buttons[f'B{i+1}'] = button
             button.place(x=endX - dX*i, y=startY + dY*i, anchor=CENTER)
 
         for i in range(5):
             if i == 4:
-                entry = Entry(self.sFrame, width=fieldWidth, font=('Calibri', 22), justify=CENTER)
+                entry = Entry(self.sFrame, state=DISABLED, width=fieldWidth, font=('Calibri', 22), justify=CENTER)
                 self.entries['C'] = entry
                 entry.place(x=startX + dX * i, y=endY - dY * i, anchor=CENTER)
                 continue
@@ -68,7 +68,7 @@ class Asocijacije(Game, ABC):
 
         for i in range(5):
             if i == 4:
-                entry = Entry(self.sFrame, width=fieldWidth, font=('Calibri', 22), justify=CENTER)
+                entry = Entry(self.sFrame, state=DISABLED, width=fieldWidth, font=('Calibri', 22), justify=CENTER)
                 self.entries['D'] = entry
                 entry.place(x=endX - dX * i, y=endY - dY * i, anchor=CENTER)
                 continue
@@ -78,13 +78,13 @@ class Asocijacije(Game, ABC):
             button.place(x=endX - dX*i, y=endY - dY*i, anchor=CENTER)
 
         self.finalEntry = Entry(self.sFrame, width=25, font=('Calibri', 22), justify=CENTER)
-        self.finalEntry.place(x=500, y=500, anchor=CENTER)
+        self.finalEntry.place(x=500, y=endY - dY * 6 + 60/2, anchor=CENTER)
 
         self.confirmButton = Button(self.sFrame, text='POTVRDI', command=self.confirm, width=7, font=('Calibri', 18))
-        self.confirmButton.place(x=800, y=500, anchor=CENTER)
+        self.confirmButton.place(x=800, y=endY - dY * 6 + 60/2, anchor=CENTER)
         self.nextButton = Button(self.sFrame, text='DALJE', command=self.next, width=7, font=('Calibri', 18))
-        self.nextButton.place(x=200, y=500, anchor=CENTER)
-        self.sFrame.grid(row=1, column=0, sticky=EW)
+        self.nextButton.place(x=200, y=endY - dY * 6 + 60/2, anchor=CENTER)
+        self.sFrame.place(x=0, y=100)
         self.setTurn(self.turn, None)
 
     def onClick(self, field):
@@ -95,9 +95,25 @@ class Asocijacije(Game, ABC):
         if button is None: return
         self.player.turnedIn = True
         self.client.connection.write_message(json.dumps(self.createPacket(PacketType.TURN_IN, ('fieldType', 'FIELD_OPEN'), ('field', field), ('answer', 'FIELD_OPEN'))))
+        entryName = field[0]
+        if entryName not in self.entries: return
+        entry = self.entries[entryName]
+        entry['state'] = NORMAL
+
+    def isOpen(self, entry):
+        if entry in self.guessedEntries: return False
+        fieldName = entry
+        if len(fieldName) != 1:
+            return False
+        field = fieldName[0]
+        for i in range(4):
+            f = f'{field}{i+1}'
+            if f in self.openedFields:
+                return True
+        return False
 
     def next(self):
-        if self.turn != self.player: return
+        if self.turn != self.player or not self.player.turnedIn: return
         self.client.connection.write_message(json.dumps(self.createPacket(PacketType.TURN_IN, ('fieldType', 'FIELD_OPEN'), ('field', 'any'), ('answer', 'NEXT'))))
 
     def getName(self):
@@ -135,6 +151,10 @@ class Asocijacije(Game, ABC):
         if self.client is None: return
         for b in self.buttons.values():
             b['state'] = NORMAL if self.client.player.name == player.name or b['text'] in self.openedFields else DISABLED
+        for e in self.entries:
+            if e in self.guessedEntries: continue
+            if self.isOpen(e):
+                self.entries[e]['state'] = NORMAL
 
     def confirm(self):
         if self.turn != self.player: return
@@ -158,6 +178,8 @@ class Asocijacije(Game, ABC):
             button = self.buttons[field]
             button['text'] = packet['value']
             self.openedFields.append(field)
+            if len(self.guessedEntries) > 0:
+                self.finalEntry['state'] = NORMAL
         elif packet['fieldType'] == 'FIELD_ANSWER':
             if not packet['correct']:
                 if field == 'resenje':
@@ -175,6 +197,7 @@ class Asocijacije(Game, ABC):
             else:
                 if field != 'resenje':
                     entry = self.entries[field]
+                    entry['state'] = NORMAL
                     entry.delete(0, END)
                     entry.insert(0, packet['value'].upper())
                     entry['bg'] = player.color
@@ -189,7 +212,7 @@ class Asocijacije(Game, ABC):
                         b = self.buttons[f'{f}']
                         b['fg'] = 'white'
                         b['bg'] = player.color
-                        b['text'] = values[i]
+                        b['text'] = values[f]
                         self.openedFields.append(f)
                 else:
                     entry = self.finalEntry
@@ -203,6 +226,16 @@ class Asocijacije(Game, ABC):
                         if k in self.openedFields: continue
                         b['fg'] = 'white'
                         b['bg'] = player.color
+                    for k, v in packet['values'].items():
+                        if len(k) == 1:
+                            e = self.entries[k]
+                            # if e in self.guessedEntries: continue
+                            entry['state'] = NORMAL
+                            entry.delete(0, END)
+                            entry.insert(0, v)
+                            entry['state'] = DISABLED
+                        elif len(k) == 2:
+                            self.buttons[k]['text'] = v
                     entry['state'] = DISABLED
 
     def clearEntry(self, entry):

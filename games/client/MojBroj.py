@@ -31,39 +31,41 @@ class MojBroj(Game, ABC):
     def start(self, client):
         super().start(client)
         self.mbFrame = Frame(self.frame, width=1000, height=1000)
-        self.expressionWidget = Entry(self.mbFrame, state=NORMAL, justify=LEFT, width=25, font=('Calibri', 32))
-        self.target = Entry(self.mbFrame, state=NORMAL, justify=CENTER, width=5, font=('Calibri', 32))
-        self.target.place(x=500, y=200, anchor=CENTER)
-        self.expressionWidget.place(x=500, y=500, anchor=CENTER)
-        self.redResult = Entry(self.mbFrame, state=NORMAL, justify=CENTER, fg='white', width=5, font=('Calibri', 32), bg='#FF0000')
-        self.blueResult = Entry(self.mbFrame, state=NORMAL, justify=CENTER, fg='white', width=5, font=('Calibri', 32), bg='#0000FF')
-        self.blueResult.place(x=100, y=300, anchor=CENTER)
-        self.redResult.place(x=900, y=300, anchor=CENTER)
+        self.expressionWidget = Entry(self.mbFrame, disabledbackground='white', disabledforeground='black', state=DISABLED, justify=LEFT, width=25, font=('Calibri', 32))
+        self.target = Entry(self.mbFrame, disabledbackground='white', disabledforeground='black', state=DISABLED, justify=CENTER, width=5, font=('Calibri', 32))
+        self.target.place(x=500, y=100, anchor=CENTER)
+        self.expressionWidget.place(x=500, y=400, anchor=CENTER)
+        self.redResult = Entry(self.mbFrame, disabledbackground='red', disabledforeground='white', state=DISABLED, justify=CENTER, fg='white', width=5, font=('Calibri', 32), bg='#FF0000')
+        self.blueResult = Entry(self.mbFrame, disabledbackground='blue', disabledforeground='white', state=DISABLED, justify=CENTER, fg='white', width=5, font=('Calibri', 32), bg='#0000FF')
+        self.blueResult.place(x=100, y=200, anchor=CENTER)
+        self.redResult.place(x=900, y=200, anchor=CENTER)
         for i in range(4):
             button = Button(self.mbFrame, text='', height=1, width=2, font=('Calibri', 24), command=lambda b=i: self.onNumberClick(b))
-            button.place(x=366 + i*24*2.8, y=650)
+            button.place(x=366 + i*24*2.8, y=550)
             self.buttons.append(button)
 
-        self.buttons.append(self.createButton(1, 8, 4, x=385, y=750, text='', center=True))
-        self.buttons.append(self.createButton(1, 11, 5, x=600, y=750, text='', center=True))
-        self.buttons.append(self.createButton(1, 2, 6, x=350-52, y=850, text='+'))
-        self.buttons.append(self.createButton(1, 2, 7, x=417-52, y=850, text='-'))
-        self.buttons.append(self.createButton(1, 2, 8, x=484-52, y=850, text='*'))
-        self.buttons.append(self.createButton(1, 2, 9, x=552-52, y=850, text='/'))
-        self.buttons.append(self.createButton(1, 2, 10, x=619-52, y=850, text='('))
-        self.buttons.append(self.createButton(1, 2, 11, x=686-52, y=850, text=')'))
+        self.buttons.append(self.createButton(1, 8, 4, x=385, y=650, text='', center=True))
+        self.buttons.append(self.createButton(1, 11, 5, x=600, y=650, text='', center=True))
+        self.buttons.append(self.createButton(1, 2, 6, x=350-52, y=750, text='+'))
+        self.buttons.append(self.createButton(1, 2, 7, x=417-52, y=750, text='-'))
+        self.buttons.append(self.createButton(1, 2, 8, x=484-52, y=750, text='*'))
+        self.buttons.append(self.createButton(1, 2, 9, x=552-52, y=750, text='/'))
+        self.buttons.append(self.createButton(1, 2, 10, x=619-52, y=750, text='('))
+        self.buttons.append(self.createButton(1, 2, 11, x=686-52, y=750, text=')'))
         #
-        img = ImageProvider.images['delete']
+        img = ImageProvider.images['delete_small']
         self.deleteButton = Button(self.mbFrame, image=img, borderwidth=0, bd=0, highlightthickness=0, command=self.onDeleteClick, text='image', bg='#FFFFFF')
         self.deleteButton.image = img
-        self.deleteButton.place(x=775, y=500, anchor=CENTER)
+        self.deleteButton.place(x=775, y=400, anchor=CENTER)
         self.confirmButton = Button(self.mbFrame, text='POTVRDI', command=self.confirm, bg='#07FC1C', activebackground='#65FF72', font=('Calibri', 20))
-        self.confirmButton.place(x=500, y=575, anchor=CENTER)
-        self.mbFrame.grid(row=1, column=0, sticky=EW)
+        self.confirmButton.place(x=500, y=475, anchor=CENTER)
+        self.mbFrame.place(x=0, y=100)
 
     def setTarget(self, target):
+        self.target['state'] = NORMAL
         self.target.delete(0, END)
         self.target.insert(0, target)
+        self.target['state'] = DISABLED
 
     def setNumbers(self, numbers):
         for i in range(6):
@@ -87,8 +89,10 @@ class MojBroj(Game, ABC):
         self.clickedButtons.insert(0, button)
 
     def updateText(self):
+        self.expressionWidget['state'] = NORMAL
         self.expressionWidget.delete(0, END)
         self.expressionWidget.insert(END, self.expression)
+        self.expressionWidget['state'] = DISABLED
 
     def onDeleteClick(self):
         if len(self.clickedButtons) <= 0:
@@ -130,16 +134,21 @@ class MojBroj(Game, ABC):
         for color, result in packet['resenja'].items():
             try:
                 evaluated = str(eval(result))
-            except SyntaxError:
+            except Exception:
                 evaluated = '???'
             if color == 'BLUE':
+                self.blueResult['state'] = NORMAL
                 self.blueResult.insert(0, evaluated)
+                self.blueResult['state'] = DISABLED
             else:
+                self.redResult['state'] = NORMAL
                 self.redResult.insert(0, evaluated)
+                self.redResult['state'] = DISABLED
         self.opponentExpressionWidget = Text(self.mbFrame, state=NORMAL, wrap='none', height=1, width=25,
                                              font=('Calibri', 32))
         self.opponentExpressionWidget.insert(END, packet['resenja'][str(self.client.opponent.color)])
         self.opponentExpressionWidget.place(x=500, y=650, anchor=CENTER)
+        self.opponentExpressionWidget['state'] = DISABLED
 
     def cleanup(self):
         super().cleanup()

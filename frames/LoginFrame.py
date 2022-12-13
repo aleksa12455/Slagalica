@@ -34,6 +34,7 @@ class LoginFrame(BaseFrame1):
     def show(self, shownFrom=None):
         super().show(shownFrom)
         self.parent.geometry('280x120')
+        self.parent.resizable(False, False)
 
     def login(self, username, password):
         print(f'{username} {password}')

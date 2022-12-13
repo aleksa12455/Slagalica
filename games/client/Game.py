@@ -35,7 +35,6 @@ class Game(BaseFrame1):
         self.parent.geometry('1000x1000')
         self.parent.title(self.getName())
         self.parent.resizable(False, False)
-        self.frame.grid_propagate(False)
 
     def update(self):
         if not self.active: return
@@ -55,10 +54,7 @@ class Game(BaseFrame1):
         self.scoreboardFrame = Frame(self.frame, width=1000, height=100)
         self.timerLabel = Label(self.scoreboardFrame, text=self.timeLeft, font=('Calibri', 15))
         self.timerLabel.place(x=500, y=50, anchor=CENTER)
-        self.scoreboardFrame.grid_rowconfigure(0, weight=1)
-        self.scoreboardFrame.columnconfigure(0, weight=1)
-        self.scoreboardFrame.grid(row=0, column=0, rowspan=1, columnspan=20, sticky=EW)
-        self.scoreboardFrame.grid_propagate(False)
+        self.scoreboardFrame.place(x=0, y=0)
         self.blueScore = Label(self.scoreboardFrame, text=self.client.getPlayer(PlayerColor.BLUE).score, fg='blue', font=('Calibri', 15))
         self.redScore = Label(self.scoreboardFrame, text=self.client.getPlayer(PlayerColor.RED).score, fg='red', font=('Calibri', 15))
         self.blueScore.place(x=50, y=50, anchor=CENTER)

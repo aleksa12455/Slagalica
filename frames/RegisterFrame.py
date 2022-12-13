@@ -42,6 +42,7 @@ class RegisterFrame(BaseFrame1):
     def show(self, shownFrom=None):
         self.parent.geometry('280x145')
         self.parent.title('Register')
+        self.parent.resizable(False, False)
         super().show(shownFrom)
 
     def register(self, username, password, repeatedPassword):

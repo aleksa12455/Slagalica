@@ -38,6 +38,7 @@ class Skocko(ServerGame, ABC):
 
     def start(self, color):
         super().start(color)
+        if self.color is None: return
         for player in self.server.clients.values():
             player.turnedIn = None
             player.turn = 1

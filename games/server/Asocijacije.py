@@ -14,6 +14,7 @@ class Asocijacije(ServerGame, ABC):
     opponent: Player = None
     opponentsTurn = False
     fields = []
+    openedFields = []
 
     def __init__(self, name, server):
         super().__init__(name, server)
@@ -35,6 +36,7 @@ class Asocijacije(ServerGame, ABC):
     def start(self, color):
         super().start(color)
         if self.turnHandle is not None: self.turnHandle.cancel()
+        self.openedFields.clear()
         for player in self.server.clients.values():
             player.turnedIn = None
             player.turn = 1
@@ -86,10 +88,15 @@ class Asocijacije(ServerGame, ABC):
         self.setPlayerTurn(self.getOtherPlayer(player))
 
     def sendField(self, field, type, correct, player, playerAnswer=''):
-        values = ('values', [])
-        if correct and len(field) == 1:
-            for i in range(4):
-                values[1].append(self.fields[f'{field}{i+1}'])
+        values = ('values', {})
+        self.openedFields.append(field)
+        if correct:
+            if len(field) == 1:
+                for i in range(4):
+                    values[1][f'{field}{i+1}'] = self.fields[f'{field}{i+1}']
+            elif field == 'resenje':
+                for k, v in self.fields.items():
+                    values[1][k] = v
         self.server.send_message(self.createPacket(PacketType.TURNED_IN, ('fieldType', type), ('field', field), ('value', self.fields[field] if type == 'FIELD_OPEN' else playerAnswer), ('correct', correct), ('player', str(player.id)), values))
 
     def getNow(self):

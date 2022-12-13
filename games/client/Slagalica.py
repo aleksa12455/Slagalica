@@ -28,20 +28,20 @@ class Slagalica(Game, ABC):
 
     def start(self, client):
         super().start(client)
-        self.slagalicaFrame = Frame(self.frame)
-        self.text = Text(self.slagalicaFrame, state=NORMAL, wrap='none', height=1, width=30, font=('Calibri', 30))
-        self.text.grid(column=0, row=0, pady=0, sticky='N', columnspan=8, rowspan=2)
+        self.slagalicaFrame = Frame(self.frame, width=1000, height=1000)
+        self.text = Text(self.slagalicaFrame, state=DISABLED, wrap='none', height=1, width=30, font=('Calibri', 30))
+        self.text.place(x=500, y=250, anchor=CENTER)
         self.wordChecker = Label(self.slagalicaFrame, justify=CENTER, anchor=CENTER, text='Rec nije pronadjena.', fg='red', font=('Calibri', 16))
-        self.wordChecker.grid(row=2, column=0, columnspan=8, rowspan=1, pady=30, sticky=N)
+        self.wordChecker.place(x=500, y=315, anchor=CENTER)
         for i in range(12):
-            button = Button(self.slagalicaFrame, text='', height=2, width=2, font=('Calibri', 16), command=lambda b=i: self.onLetterClick(b))
-            button.grid(row=5 if i < 6 else 6, column=1 + (i % 6), columnspan=1, padx=0, sticky=EW)
+            button = Button(self.slagalicaFrame, text='', height=2, width=4, font=('Calibri', 16), command=lambda b=i: self.onLetterClick(b))
+            button.place(x=160+37.5+80 + 90*(i%6), y=400 + (0 if i < 6 else 85), anchor=CENTER)
             self.buttons.append(button)
-        self.deleteButton = Button(self.slagalicaFrame, text='OBRISI', command=self.onDeleteClick, bg='#E78587', height=3, width=3, font=('Calibri', 14))
-        self.deleteButton.grid(column=1, columnspan=2, rowspan=2, row=8, pady=15, sticky=NSEW)
-        self.confirmButton = Button(self.slagalicaFrame, text='POTVRDI', command=self.onConfirmWord, bg='#07FC1C', activebackground='#65FF72', font=('Calibri', 14))
-        self.confirmButton.grid(column=5, columnspan=2, rowspan=2, row=8, pady=15, sticky=NSEW)
-        self.slagalicaFrame.grid(row=2, column=0, sticky=N)
+        self.deleteButton = Button(self.slagalicaFrame, text='OBRISI', command=self.onDeleteClick, bg='#E78587', height=2, width=12, font=('Calibri', 16))
+        self.deleteButton.place(x=680, y=585, anchor=CENTER)
+        self.confirmButton = Button(self.slagalicaFrame, text='POTVRDI', command=self.onConfirmWord, bg='#07FC1C', height=2, width=12, activebackground='#65FF72', font=('Calibri', 16))
+        self.confirmButton.place(x=160+86+80, y=585, anchor=CENTER)
+        self.slagalicaFrame.place(x=0, y=100)
 
     def setLetters(self, letters):
         for i in range(12):
@@ -57,7 +57,8 @@ class Slagalica(Game, ABC):
         self.confirmButton.destroy()
         self.opponentWord = Text(self.slagalicaFrame, state=NORMAL, wrap='none', height=1, width=30, font=('Calibri', 30))
         self.opponentWord.insert(END, 'Protivnik resava...')
-        self.opponentWord.grid(row=3, column=0, columnspan=8, rowspan=1, pady=30, sticky=N)
+        self.opponentWord.place(x=500, y=400, anchor=CENTER)
+        self.opponentWord['state'] = DISABLED
 
     def onLetterClick(self, index):
         if self.client.turnedIn: return
@@ -77,14 +78,16 @@ class Slagalica(Game, ABC):
         button['state'] = NORMAL
 
     def updateText(self):
+        self.text['state'] = NORMAL
         self.text.delete('1.0', END)
         self.text.insert(END, self.word)
         if len(self.word) > 1 and self.word.lower() in self.recnik:
-            self.wordChecker['text'] = 'Rec je pronadjena'
+            self.wordChecker['text'] = 'Rec je pronadjena.'
             self.wordChecker['fg'] = 'green'
         else:
-            self.wordChecker['text'] = 'Rec nije pronadjena'
+            self.wordChecker['text'] = 'Rec nije pronadjena.'
             self.wordChecker['fg'] = 'red'
+        self.text['state'] = DISABLED
 
 
     def getName(self):
@@ -99,8 +102,10 @@ class Slagalica(Game, ABC):
 
     def handleGameEnd(self, packet):
         if self.client.turnedIn:
+            self.opponentWord['state'] = NORMAL
             self.opponentWord.delete('1.0', END)
             self.opponentWord.insert(END, packet['resenje'][str(self.client.opponent.id)])
+            self.opponentWord['state'] = DISABLED
         else:
             self.word = ''
             self.updateText()
@@ -112,11 +117,13 @@ class Slagalica(Game, ABC):
             self.confirmButton.destroy()
             self.opponentWord = Text(self.slagalicaFrame, state=NORMAL, wrap='none', height=1, width=30, font=('Calibri', 30))
             self.opponentWord.insert(END, packet['resenje'][str(self.client.opponent.id)])
-            self.opponentWord.grid(row=3, column=0, columnspan=8, rowspan=1, pady=30, sticky=N)
+            self.opponentWord.place(x=500, y=400, anchor=CENTER)
+            self.opponentWord['state'] = DISABLED
 
         self.computerWord = Text(self.slagalicaFrame, state=NORMAL, wrap='none', height=1, width=30, font=('Calibri', 30))
         self.computerWord.insert(END, packet['najduza'])
-        self.computerWord.grid(row=4, column=0, columnspan=8, rowspan=1, pady=30, sticky=N)
+        self.computerWord.place(x=500, y=550, anchor=CENTER)
+        self.computerWord['state'] = DISABLED
 
     def cleanup(self):
         super().cleanup()

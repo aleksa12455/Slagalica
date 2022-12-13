@@ -15,6 +15,7 @@ def load():
     global images
     images = {
         'delete': getTkinterImage('images/buttons/delete.png', (80, 80)),
+        'delete_small': getTkinterImage('images/buttons/delete.png', (50, 50)),
         'skocko': getTkinterImage('images/skocko/skocko.png', (80, 80)),
         'tref': getTkinterImage('images/skocko/tref.png', (80, 80)),
         'pik': getTkinterImage('images/skocko/pik.png', (80, 80)),

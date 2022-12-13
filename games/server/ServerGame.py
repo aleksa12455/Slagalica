@@ -43,7 +43,7 @@ class ServerGame:
     def next(self):
         self.server.nextGame()
         self.server.getGame().start('BLUE')
-        print('starting ' + self.server.getGame())
+        # print('starting ' + self.server.getGame())
         self.color = None
 
     @abstractmethod

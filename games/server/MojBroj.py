@@ -42,6 +42,7 @@ class MojBroj(ServerGame, ABC):
 
     def start(self, color):
         super().start(color)
+        if self.color is None: return
         for player in self.server.clients.values():
             player.turnedIn = None
         self.generate()
@@ -61,7 +62,7 @@ class MojBroj(ServerGame, ABC):
                 continue
             try:
                 result = eval(player.turnedIn)
-            except SyntaxError:
+            except Exception:
                 results[player.color] = '???'
                 continue
             results[player.color] = player.turnedIn

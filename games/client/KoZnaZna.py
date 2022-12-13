@@ -37,7 +37,7 @@ class KoZnaZna(Game, ABC):
 
         self.nextButton = Button(self.sFrame, text='DALJE', command=self.dalje, width=7, bg='yellow', activebackground='#65FF72', font=('Calibri', 20))
         self.nextButton.place(x=500, y=800, anchor=CENTER)
-        self.sFrame.grid(row=1, column=0, sticky=EW)
+        self.sFrame.place(x=0, y=100)
         self.setTurn(self.turn, None)
 
     def onClick(self, index):

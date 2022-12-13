@@ -35,14 +35,13 @@ class Skocko(Game, ABC):
         self.sFrame = Frame(self.frame, width=1000, height=1000)
 
         self.canvas = Canvas(self.sFrame, height=900, width=950)
-        self.canvas.place(x=50, y=150)
+        self.canvas.place(x=50, y=50)
         for i in range(9):
             if i == 6: continue
             if i < 6:
                 self.canvas.create_rectangle(820, 5+80*i, 900, 5+80+80*i, fill='#FFFFFF', outline='red')
-                img = self.getImage(i)
                 x = 820+50+40
-                y = 5+80+85*i+150-40
+                y = 5+80+85*i+50-40
                 button = Button(self.sFrame, image=self.getImage(i), command=lambda c=i: self.onClick(c), state=DISABLED)
                 button.place(x=x, y=y, anchor=CENTER)
                 self.buttons.append(button)
@@ -51,10 +50,10 @@ class Skocko(Game, ABC):
                 self.canvas.create_rectangle(5+80*j, 5+80*i, 5+80+80*j, 5+80+80*i, fill='#FFFFFF')
 
         self.deleteButton = Button(self.sFrame, text='OBRISI', command=self.onDeleteClick, width=7, bg='#07FC1C', activebackground='#65FF72', font=('Calibri', 20))
-        self.deleteButton.place(x=900, y=850, anchor=CENTER)
+        self.deleteButton.place(x=900, y=750, anchor=CENTER)
         self.confirmButton = Button(self.sFrame, text='POTVRDI', command=self.confirm, width=7, bg='#07FC1C', activebackground='#65FF72', font=('Calibri', 20), state=DISABLED)
-        self.confirmButton.place(x=900, y=800, anchor=CENTER)
-        self.sFrame.grid(row=1, column=0, sticky=EW)
+        self.confirmButton.place(x=900, y=700, anchor=CENTER)
+        self.sFrame.place(x=0, y=100)
         self.setTurn(self.turn, None)
 
     def onDeleteClick(self):

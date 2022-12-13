@@ -26,9 +26,10 @@ class BaseFrame1:
 
     def hide(self):
         self.frame.pack_forget()
+        self.frame.destroy()
 
     def show(self, shownFrom=None):
         self.shownFrom = shownFrom
         if shownFrom is not None:
             shownFrom.hide()
-        self.frame.pack(fill=None, side=BOTTOM, expand=True)
+        self.frame.pack(fill=BOTH, side=BOTTOM, expand=True)

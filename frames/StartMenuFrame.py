@@ -13,11 +13,11 @@ class StartMenuFrame(BaseFrame1):
 
     def initialize(self):
         button = Button(self.frame, text='Igraj', command=self.play)
-        button.grid(pady=475)
+        button.place(x=140, y=60, anchor=CENTER)
 
     def show(self, shownFrom=None):
         super().show(shownFrom)
-        self.parent.geometry('1000x1000')
+        self.parent.geometry('280x120')
         self.parent.title('Igraj')
         self.parent.resizable(False, False)
 
