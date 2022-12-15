@@ -42,7 +42,7 @@ class Client:
     def connect_and_read(self):
         print("Reading...")
         websocket.websocket_connect(
-            url=f"ws://localhost:8888/websocket/",
+            url=f"ws://85.10.203.3:43110/websocket/",
             callback=self.maybe_retry_connection,
             on_message_callback=self.on_message,
             ping_interval=10,
