@@ -51,7 +51,7 @@ class Slagalica(ServerGame, ABC):
 
     def __init__(self, name, server):
         super().__init__(name, server)
-        self.recnikFile = open('recnik.txt')
+        self.recnikFile = open('recnik.txt', encoding='utf8')
         self.recnik = self.recnikFile.read()
 
     def initialize(self):

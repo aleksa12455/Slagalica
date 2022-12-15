@@ -1,16 +1,9 @@
 import json
-import time
 import uuid
 from abc import ABC
 
-import PIL
-from PIL import ImageTk
-
 from games.client.Game import Game, PacketType
 from tkinter import *
-
-from images import ImageProvider
-
 
 class KoZnaZna(Game, ABC):
 

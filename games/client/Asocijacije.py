@@ -143,6 +143,9 @@ class Asocijacije(Game, ABC):
             e.destroy()
         self.buttons.clear()
         self.confirmButton.destroy()
+        self.entries.clear()
+        self.guessedEntries.clear()
+        self.openedFields.clear()
 
     def setTurn(self, player, packet):
         super().setTurn(player, packet)
@@ -152,7 +155,9 @@ class Asocijacije(Game, ABC):
         for b in self.buttons.values():
             b['state'] = NORMAL if self.client.player.name == player.name or b['text'] in self.openedFields else DISABLED
         for e in self.entries:
-            if e in self.guessedEntries: continue
+            if self.entries[e] in self.guessedEntries:
+                self.entries[e]['state'] = DISABLED
+                continue
             if self.isOpen(e):
                 self.entries[e]['state'] = NORMAL
 
@@ -222,18 +227,23 @@ class Asocijacije(Game, ABC):
                     entry['fg'] = 'white'
                     entry['disabledbackground'] = player.color
                     entry['disabledforeground'] = 'white'
+                    entry['state'] = DISABLED
                     for k, b in self.buttons.items():
-                        if k in self.openedFields: continue
+                        if b['bg'] == 'BLUE' or b['bg'] == 'RED': continue
                         b['fg'] = 'white'
                         b['bg'] = player.color
                     for k, v in packet['values'].items():
                         if len(k) == 1:
                             e = self.entries[k]
-                            # if e in self.guessedEntries: continue
-                            entry['state'] = NORMAL
-                            entry.delete(0, END)
-                            entry.insert(0, v)
-                            entry['state'] = DISABLED
+                            if e in self.guessedEntries: continue
+                            e['state'] = NORMAL
+                            e.delete(0, END)
+                            e.insert(0, v)
+                            e['bg'] = player.color
+                            e['fg'] = 'white'
+                            e['disabledbackground'] = player.color
+                            e['disabledforeground'] = 'white'
+                            e['state'] = DISABLED
                         elif len(k) == 2:
                             self.buttons[k]['text'] = v
                     entry['state'] = DISABLED

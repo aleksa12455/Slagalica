@@ -107,48 +107,44 @@ class Client:
 
     def handleGameStart(self, packet):
         game = packet['igra']
-        match game:
-            case 'slagalica':
-                slagalica = games.client.Game.games['Slagalica']
-                self.game = slagalica
-                slagalica.start(self)
-                slagalica.setLetters(packet['slova'])
-                slagalica.show(BaseFrame.frames['waiting'])
-            case 'moj_broj':
-                print("starting moj broj")
-                mojBroj = games.client.Game.games['Moj Broj']
-                self.game = mojBroj
-                mojBroj.start(self)
-                mojBroj.setTarget(packet['rezultat'])
-                mojBroj.setNumbers(packet['brojevi'])
-                mojBroj.show(games.client.Game.games['Slagalica'])
-            case 'skocko':
-                print("starting skocko")
-                skocko = games.client.Game.games['Skocko']
-                color = packet['boja']
-                self.game = skocko
-                self.game.setTurn(self.getPlayer(PlayerColor[color]), packet)
-                skocko.start(self)
-                skocko.show(games.client.Game.games['Moj Broj'])
-                # skocko.show(BaseFrame.frames['waiting'])
-            case 'ko_zna_zna':
-                print("starting skocko")
-                kzz = games.client.Game.games['Ko Zna Zna']
-                color = packet['boja']
-                self.game = kzz
-                self.game.setTurn(self.getPlayer(PlayerColor[color]), packet)
-                kzz.start(self)
-                kzz.show(games.client.Game.games['Skocko'])
-                # kzz.show(BaseFrame.frames['waiting'])
-            case 'asocijacije':
-                print("starting asocijacije")
-                asocijacije = games.client.Game.games['Asocijacije']
-                color = packet['boja']
-                self.game = asocijacije
-                self.game.setTurn(self.getPlayer(PlayerColor[color]), packet)
-                asocijacije.start(self)
-                asocijacije.show(games.client.Game.games['Ko Zna Zna'])
-                # asocijacije.show(BaseFrame.frames['waiting'])
+        if game == 'slagalica':
+            slagalica = games.client.Game.games['Slagalica']
+            self.game = slagalica
+            slagalica.start(self)
+            slagalica.setLetters(packet['slova'])
+            slagalica.show(BaseFrame.frames['waiting'])
+        elif game == 'moj_broj':
+            mojBroj = games.client.Game.games['Moj Broj']
+            self.game = mojBroj
+            mojBroj.start(self)
+            mojBroj.setTarget(packet['rezultat'])
+            mojBroj.setNumbers(packet['brojevi'])
+            mojBroj.show(games.client.Game.games['Slagalica'])
+        elif game == 'skocko':
+            skocko = games.client.Game.games['Skocko']
+            color = packet['boja']
+            self.game = skocko
+            self.game.setTurn(self.getPlayer(PlayerColor[color]), packet)
+            skocko.start(self)
+            skocko.show(games.client.Game.games['Moj Broj'])
+            # skocko.show(BaseFrame.frames['waiting'])
+        elif game == 'ko_zna_zna':
+            kzz = games.client.Game.games['Ko Zna Zna']
+            color = packet['boja']
+            self.game = kzz
+            self.game.setTurn(self.getPlayer(PlayerColor[color]), packet)
+            kzz.start(self)
+            kzz.show(games.client.Game.games['Skocko'])
+            # kzz.show(BaseFrame.frames['waiting'])
+        elif game == 'asocijacije':
+            asocijacije = games.client.Game.games['Asocijacije']
+            color = packet['boja']
+            self.game = asocijacije
+            self.game.setTurn(self.getPlayer(PlayerColor[color]), packet)
+            asocijacije.start(self)
+            asocijacije.show(games.client.Game.games['Ko Zna Zna'])
+            # asocijacije.show(BaseFrame.frames['waiting'])
+
 
     def handleGameEnd(self):
         if not self.turnedIn: self.connection.write_message(json.dumps(self.game.createTurnInPacket()))

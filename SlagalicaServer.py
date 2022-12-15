@@ -97,9 +97,8 @@ class Server(tornado.websocket.WebSocketHandler):
         except:
             return
         if packet is None: return
-        match packet['type']:
-            case 'TURN_IN':
-                self.handleTurnIn(packet)
+        if packet['type'] == 'TURN_IN':
+            self.handleTurnIn(packet)
 
     def nextGame(self):
         g = 0
@@ -117,18 +116,17 @@ class Server(tornado.websocket.WebSocketHandler):
     def handleTurnIn(self, packet):
         player = self.clients[uuid.UUID(packet['player'])]
         if player is None: return
-        match packet['game']:
-            case 'Slagalica':
-                self.games[0].handleTurnIn(player, packet)
-            case 'Moj Broj':
-                self.games[1].handleTurnIn(player, packet)
-            case 'Skocko':
-                 self.games[2].handleTurnIn(player, packet)
-            case 'Ko Zna Zna':
-                self.games[3].handleTurnIn(player, packet)
-            case 'Asocijacije':
-                self.games[4].handleTurnIn(player, packet)
-        # self.getCurrentGame().handleTurnIn(player, packet)
+        game = packet['game']
+        if game == 'Slagalica':
+            self.games[0].handleTurnIn(player, packet)
+        elif game == 'Moj Broj':
+            self.games[1].handleTurnIn(player, packet)
+        elif game == 'Skocko':
+            self.games[2].handleTurnIn(player, packet)
+        elif game == 'Ko Zna Zna':
+            self.games[3].handleTurnIn(player, packet)
+        elif game == 'Asocijacije':
+            self.games[4].handleTurnIn(player, packet)
 
 
     def getCurrentGame(self):

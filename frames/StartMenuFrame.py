@@ -3,7 +3,6 @@ from PlayerClient import Client
 from frames.BaseFrame import BaseFrame1
 from tkinter import *
 import asyncio
-import nest_asyncio
 
 
 class StartMenuFrame(BaseFrame1):

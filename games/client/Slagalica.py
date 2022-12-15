@@ -23,7 +23,7 @@ class Slagalica(Game, ABC):
         super().__init__(parent, frame)
 
     def onInitialize(self):
-        self.recnikFile = open('recnik.txt')
+        self.recnikFile = open('recnik.txt', encoding="utf8")
         self.recnik = self.recnikFile.read()
 
     def start(self, client):
