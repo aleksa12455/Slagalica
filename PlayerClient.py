@@ -74,8 +74,6 @@ class Client:
             return
         packetType = message['type']
         if packetType == 'FORCE_STOP':
-            print('force stopping...')
-            print(self.parent)
             self.stop()
             self.parent.quit()
         elif packetType == 'GAME_START':

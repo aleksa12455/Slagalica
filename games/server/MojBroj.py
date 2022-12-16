@@ -70,7 +70,7 @@ class MojBroj(ServerGame, ABC):
                 results[player.color] = '???'
                 continue
             results[player.color] = player.turnedIn
-            difference = self.result - result
+            difference = abs(self.result - result)
             if winner is not None and difference == winner[1]:
                 if winner[0].color == self.server.getCurrentGame().color: continue
                 winner = (player, difference)
