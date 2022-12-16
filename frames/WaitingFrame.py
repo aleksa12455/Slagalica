@@ -11,7 +11,7 @@ class WaitingFrame(BaseFrame1):
 
     def initialize(self):
         self.label = Label(self.frame, text='Cekamo drugog igraca...')
-        self.label.grid(pady=475)
+        self.label.place(x=500, y=500, anchor=CENTER)
 
     def show(self, shownFrom=None):
         super().show(shownFrom)

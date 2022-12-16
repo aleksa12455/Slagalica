@@ -40,6 +40,10 @@ class MojBroj(ServerGame, ABC):
                 return False
         return True
 
+    def forceStop(self):
+        super().forceStop()
+        if self.endGameHandle is not None: self.endGameHandle.cancel()
+
     def start(self, color):
         super().start(color)
         if self.color is None: return

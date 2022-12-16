@@ -37,9 +37,9 @@ class KoZnaZna(ServerGame, ABC):
 
     def generate(self):
         self.chosenQuestions.clear()
-        for i in range(10):
-            n = random.randint(0, len(self.allQuestions)-1)
-            self.chosenQuestions.append(self.allQuestions[n])
+        for i in range(5):
+            # n = random.randint(0, len(self.allQuestions)-1)
+            self.chosenQuestions.append(self.allQuestions[i])
         return self.chosenQuestions
 
     def start(self, color):
@@ -53,6 +53,11 @@ class KoZnaZna(ServerGame, ABC):
         self.server.send_message(self.createPacket(PacketType.GAME_START, ('igra', 'ko_zna_zna'), ('boja', color)))
         self.endGameHandle = self.server.getIOLoop().IOLoop.current().call_later(120, lambda: self.stop() if self.active else None)
         self.nextQuestion()
+
+    def forceStop(self):
+        super().forceStop()
+        if self.endGameHandle is not None: self.endGameHandle.cancel()
+        if self.checkAnswersHandle is not None: self.checkAnswersHandle.cancel()
 
     def stop(self):
         self.active = False

@@ -1,3 +1,5 @@
+import sys
+import threading
 from tkinter import *
 
 from frames.LoginFrame import LoginFrame
@@ -10,6 +12,12 @@ from games.client.MojBroj import MojBroj
 from games.client.Slagalica import Slagalica
 from games.client.Skocko import Skocko
 from images import ImageProvider
+
+def onExit():
+    parent.destroy()
+    startMenu.exit()
+    for thread in threading.enumerate():
+        print(thread.name)
 
 parent = Tk()
 parent.geometry('240x100')
@@ -52,4 +60,5 @@ login.show()
 
 ImageProvider.load()
 
+parent.protocol('WM_DELETE_WINDOW', onExit)
 parent.mainloop()

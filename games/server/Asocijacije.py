@@ -36,6 +36,7 @@ class Asocijacije(ServerGame, ABC):
     def start(self, color):
         super().start(color)
         if self.turnHandle is not None: self.turnHandle.cancel()
+        if self.color is None: return
         self.openedFields.clear()
         for player in self.server.clients.values():
             player.turnedIn = None
@@ -48,9 +49,11 @@ class Asocijacije(ServerGame, ABC):
         self.startTime = self.getNow()
         self.generate()
         self.active = True
+        self.opponentsTurn = False
         self.server.send_message(self.createPacket(PacketType.GAME_START, ('igra', 'asocijacije'), ('boja', color)))
         self.endGameHandle = self.server.getIOLoop().IOLoop.current().call_later(1000, lambda: self.stop() if self.active else None)
         self.turnHandle = self.server.getIOLoop().IOLoop.current().call_later(25, lambda: self.setPlayerTurn(self.getOtherPlayer(self.getCurrentTurnPlayer())))
+
     def stop(self):
         self.active = False
         self.endGameHandle.cancel()
@@ -87,6 +90,11 @@ class Asocijacije(ServerGame, ABC):
                 return
         self.setPlayerTurn(self.getOtherPlayer(player))
 
+    def forceStop(self):
+        super().forceStop()
+        if self.endGameHandle is not None: self.endGameHandle.cancel()
+        if self.turnHandle is not None: self.turnHandle.cancel()
+
     def sendField(self, field, type, correct, player, playerAnswer=''):
         values = ('values', {})
         self.openedFields.append(field)
@@ -117,4 +125,4 @@ class Asocijacije(ServerGame, ABC):
         return self.player
 
     def next(self):
-        pass
+        self.color = None

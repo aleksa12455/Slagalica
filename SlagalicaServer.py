@@ -56,6 +56,9 @@ class Server(tornado.websocket.WebSocketHandler):
         self.game = self.games[0]
 
     def open(self):
+        if len(self.clients) >= 2:
+            self.close()
+            return
         name = f'player{len(self.clients)+1}'
         playerId = uuid.uuid4()
         protivnik = {}
@@ -74,11 +77,14 @@ class Server(tornado.websocket.WebSocketHandler):
 
     def on_close(self):
         toRemove = None
-        for id, client in self.clients.items():
-            if client == self:
+        for id, player in self.clients.items():
+            if player.client == self:
                 toRemove = id
                 break
-        if toRemove is not None: self.clients.pop(toRemove)
+        if toRemove is not None:
+            self.clients.pop(toRemove)
+            self.sendForceStop()
+            self.reloadGames()
 
     @classmethod
     def send_message(cls, packet, client=None):
@@ -135,6 +141,27 @@ class Server(tornado.websocket.WebSocketHandler):
     def getIOLoop(self):
         return tornado.ioloop
 
+    def reloadGames(self):
+        for game in self.games:
+            game.forceStop()
+        from games.server.Slagalica import Slagalica
+        from games.server.MojBroj import MojBroj
+        from games.server.Skocko import Skocko
+        from games.server.KoZnaZna import KoZnaZna
+        from games.server.Asocijacije import Asocijacije
+
+        self.games.clear()
+        self.games.append(Slagalica('Slagalica', self))
+        self.games.append(MojBroj('MojBroj', self))
+        self.games.append(Skocko('Skocko', self))
+        self.games.append(KoZnaZna('KoZnaZna', self))
+        self.games.append(Asocijacije('Asocijacije', self))
+
+        self.game = self.games[0]
+
+    def sendForceStop(self):
+        self.send_message(createPacket(PacketType.FORCE_STOP))
+
 class PacketType(Enum):
     PLAYER_CONNECT = 0
     GAME_START = 1
@@ -142,6 +169,7 @@ class PacketType(Enum):
     UPDATE_SCORE = 3
     TURNED_IN = 4
     TURN_CHANGE = 5
+    FORCE_STOP = 6
 
 def createPacket(packetType, *values):
     packet = {

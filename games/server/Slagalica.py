@@ -129,6 +129,10 @@ class Slagalica(ServerGame, ABC):
         self.server.send_message(self.createPacket(PacketType.GAME_START, ('igra', 'slagalica'), ('slova', self.letters.tolist())))
         self.endGameHandle = self.server.getIOLoop().IOLoop.current().call_later(60, lambda: self.stop() if self.active else None)
 
+    def forceStop(self):
+        super().forceStop()
+        if self.endGameHandle is not None: self.endGameHandle.cancel()
+
     def stop(self):
         self.active = False
         self.endGameHandle.cancel()
@@ -149,8 +153,6 @@ class Slagalica(ServerGame, ABC):
             player.score += len(player.turnedIn)*2
             if longerWord is not None and longerWord[0] == player:
                 player.score = player.score + 6
-            else:
-                print(str(longerWord is not None) + ' ' + str(longerWord[0] == player))
             packet = self.createPacket(PacketType.UPDATE_SCORE, ('id', str(player.id)), ('score', player.score))
             words[str(player.id)] = player.turnedIn
             self.server.send_message(packet)

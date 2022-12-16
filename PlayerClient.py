@@ -1,3 +1,5 @@
+import sys
+import threading
 from enum import Enum
 
 from tornado import websocket
@@ -27,21 +29,23 @@ class Client:
     game = None
     turnedIn = False
 
-    def __init__(self, io_loop):
+    def __init__(self, parent, io_loop):
         self.connection = None
         self.io_loop = io_loop
         self.num_successes = 0
         self.num_trials = 0
+        self.parent = parent
 
     def start(self):
         self.connect_and_read()
 
     def stop(self):
         self.io_loop.stop()
+        if self.connection is not None: self.connection.close()
 
     def connect_and_read(self):
-        print("Reading...")
         websocket.websocket_connect(
+            # url=f"ws://localhost:43110/websocket/",
             url=f"ws://85.10.203.3:43110/websocket/",
             callback=self.maybe_retry_connection,
             on_message_callback=self.on_message,
@@ -50,10 +54,11 @@ class Client:
         )
 
     def maybe_retry_connection(self, future) -> None:
+        if self.parent.state() != 'normal':
+            return
         try:
             self.connection = future.result()
         except:
-            print("Could not reconnect, retrying in 3 seconds...")
             self.io_loop.call_later(3, self.connect_and_read)
 
     def on_message(self, m):
@@ -63,9 +68,17 @@ class Client:
             pass
 
         print('received: ' + str(m))
-        message = json.loads(m)
+        try:
+            message = json.loads(m)
+        except:
+            return
         packetType = message['type']
-        if packetType == 'GAME_START':
+        if packetType == 'FORCE_STOP':
+            print('force stopping...')
+            print(self.parent)
+            self.stop()
+            self.parent.quit()
+        elif packetType == 'GAME_START':
             self.handleGameStart(message)
         elif packetType == 'PLAYER_CONNECT':
             if self.player is None:

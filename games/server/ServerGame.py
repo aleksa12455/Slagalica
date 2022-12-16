@@ -40,6 +40,9 @@ class ServerGame:
             self.next()
         else: self.color = color
 
+    def forceStop(self):
+        pass
+
     def next(self):
         self.server.nextGame()
         self.server.getGame().start('BLUE')

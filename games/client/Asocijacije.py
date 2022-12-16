@@ -132,6 +132,7 @@ class Asocijacije(Game, ABC):
 
     def stopProgram(self):
         self.client.stop()
+        self.client.connection.close()
         self.parent.destroy()
 
 

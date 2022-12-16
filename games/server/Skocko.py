@@ -36,6 +36,10 @@ class Skocko(ServerGame, ABC):
             if symbol not in self.symbols: return False
         return True
 
+    def forceStop(self):
+        super().forceStop()
+        if self.endGameHandle is not None: self.endGameHandle.cancel()
+
     def start(self, color):
         super().start(color)
         if self.color is None: return
